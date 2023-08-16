@@ -16,6 +16,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, see <http://www.gnu.org/licenses/>.
  */
+#include "qemuEmulator.h"
 
 #include "qemu/osdep.h"
 #include "qemu/help-texts.h"
@@ -1016,7 +1017,6 @@ int main(int argc, char **argv, char **envp)
     return 0;
 }
 
-extern int qemuUserEmulator(int argc, char **argv, char **envp);
 int qemuUserEmulator(int argc, char **argv, char **envp){
     return main(argc,argv,envp);
 }
