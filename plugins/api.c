@@ -52,6 +52,8 @@
 #endif
 #endif
 
+#include "qemu/main-loop.h"
+
 /* Uninstall and Reset handlers */
 
 void qemu_plugin_uninstall(qemu_plugin_id_t id, qemu_plugin_simple_cb_t cb)
@@ -441,4 +443,13 @@ uint64_t qemu_plugin_entry_code(void)
     entry = ts->info->entry;
 #endif
     return entry;
+}
+
+
+void plugin_qemu_mutex_lock_iothread(void){
+    qemu_mutex_lock_iothread();
+}
+
+void plugin_qemu_mutex_unlock_iothread(void){
+    qemu_mutex_unlock_iothread();
 }

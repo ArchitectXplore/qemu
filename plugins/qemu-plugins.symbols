@@ -42,4 +42,6 @@
   qemu_plugin_tb_vaddr;
   qemu_plugin_uninstall;
   qemu_plugin_vcpu_for_each;
+  plugin_qemu_mutex_lock_iothread;
+  plugin_qemu_mutex_unlock_iothread;
 };

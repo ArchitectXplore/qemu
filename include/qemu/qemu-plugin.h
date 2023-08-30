@@ -664,4 +664,8 @@ uint64_t qemu_plugin_end_code(void);
  */
 uint64_t qemu_plugin_entry_code(void);
 
+void plugin_qemu_mutex_lock_iothread(void);
+
+void plugin_qemu_mutex_unlock_iothread(void);
+
 #endif /* QEMU_QEMU_PLUGIN_H */
