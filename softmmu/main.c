@@ -25,6 +25,7 @@
 #include "qemu/osdep.h"
 #include "qemu-main.h"
 #include "sysemu/sysemu.h"
+#include "qemu/plugin.h"
 #include "qemuEmulator.h"
 
 #ifdef CONFIG_SDL
@@ -51,5 +52,7 @@ int main(int argc, char **argv)
 
 int qemuSystemEmulator(int argc, char **argv) {
     qemu_init(argc, argv);
-    return qemu_main();
+    int ret = qemu_main();
+    qemu_plugin_atexit_cb();
+    return ret;
 }
