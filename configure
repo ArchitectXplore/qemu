@@ -768,6 +768,7 @@ for opt do
       meson_option_parse --enable-debug-graph-lock ""
       meson_option_parse --enable-debug-mutex ""
       meson_option_add -Doptimization=0
+      meson_option_add -Ddebug=true
   ;;
   --disable-tcg) tcg="disabled"
                  plugins="no"
