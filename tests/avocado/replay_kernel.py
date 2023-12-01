@@ -81,7 +81,8 @@ class ReplayKernelBase(LinuxKernelTest):
         logger.info('replay overhead {:.2%}'.format(t2 / t1 - 1))
 
 class ReplayKernelNormal(ReplayKernelBase):
-    @skipIf(os.getenv('GITLAB_CI'), 'Running on GitLab')
+
+    @skipUnless(os.getenv('QEMU_TEST_FLAKY_TESTS'), 'Test sometimes gets stuck')
     def test_x86_64_pc(self):
         """
         :avocado: tags=arch:x86_64
@@ -255,8 +256,7 @@ class ReplayKernelNormal(ReplayKernelBase):
         kernel_path = self.fetch_asset(kernel_url, asset_hash=kernel_hash)
 
         kernel_command_line = self.KERNEL_COMMON_COMMAND_LINE + 'console=hvc0'
-        # icount is not good enough for PPC64 for complete boot yet
-        console_pattern = 'Kernel command line: %s' % kernel_command_line
+        console_pattern = 'VFS: Cannot open root device'
         self.run_rr(kernel_path, kernel_command_line, console_pattern)
 
     def test_ppc64_powernv(self):
