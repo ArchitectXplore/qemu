@@ -173,7 +173,7 @@ static void htif_handle_tohost_write(HTIFState *s, uint64_t val_written)
         if (cmd == HTIF_SYSTEM_CMD_SYSCALL) {
             if (payload & 0x1) {
                 /* exit code */
-                // int exit_code = payload >> 1;
+                int exit_code = payload >> 1;
 
                 /*
                  * Dump signature data if sig_file is specified and
