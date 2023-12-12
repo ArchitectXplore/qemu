@@ -53,6 +53,7 @@
 #endif
 
 #include "qemu/main-loop.h"
+#include "gdbstub/internals.h"
 
 /* Uninstall and Reset handlers */
 
@@ -431,10 +432,26 @@ uint64_t qemu_plugin_entry_code(void)
 }
 
 
-void plugin_qemu_mutex_lock_iothread(void){
+void qemu_plugin_mutex_lock_iothread(void){
     qemu_mutex_lock_iothread();
 }
 
-void plugin_qemu_mutex_unlock_iothread(void){
+void qemu_plugin_mutex_unlock_iothread(void){
     qemu_mutex_unlock_iothread();
+}
+
+void qemu_plugin_read_register(uint8_t* buf, uint64_t index) {
+    CPUState* cpu = current_cpu;
+    
+    GByteArray *byteArray = g_byte_array_new();
+    cpu->cc->gdb_read_register(cpu, byteArray, index);
+    
+    memcpy(buf, byteArray->data, byteArray->len);
+
+    g_byte_array_free(byteArray, TRUE);
+}
+
+void qemu_plugin_read_memory(uint8_t *buf, uint64_t addr, uint64_t len){
+    CPUState* cpu = current_cpu;
+    gdb_target_memory_rw_debug(cpu, addr, buf, len, false);
 }

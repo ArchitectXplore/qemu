@@ -4,6 +4,7 @@ extern "C" {
 
 #include <glib.h>
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <cassert>
 #include <unordered_map>
@@ -56,14 +57,35 @@ static void resize_last_exec_array(unsigned int size){
 
 static void record_last_insn(const qemu_trace_insn_t& insn){
     g_autoptr(GString) report = g_string_new("");
-    g_string_append_printf(report,"hart %d :", insn.hart_id);
-    g_string_append_printf(report,"uid %08ld, ", insn.uid );
-    g_string_append_printf(report,"opcode %08x, ", insn.opcode );
-    g_string_append_printf(report,"pc_vaddr 0x%08lx, ", insn.pc_vaddr );
-    g_string_append_printf(report,"pc_paddr 0x%08lx, ", insn.pc_paddr );
-    g_string_append_printf(report,"mem_vaddr 0x%08lx, ", insn.mem_vaddr );
-    g_string_append_printf(report,"mem_paddr 0x%08lx\n", insn.mem_paddr );
+    // g_string_append_printf(report,"hart %d :", insn.hart_id);
+    // g_string_append_printf(report,"uid %08ld, ", insn.uid );
+    g_string_append_printf(report,"pc 0x%08lx, ", insn.pc_vaddr );
+    g_string_append_printf(report,"opcode %08x\n", insn.opcode );
+    // g_string_append_printf(report,"pc_vaddr 0x%08lx, ", insn.pc_vaddr );
+    // g_string_append_printf(report,"pc_paddr 0x%08lx, ", insn.pc_paddr );
+    // g_string_append_printf(report,"mem_vaddr 0x%08lx, ", insn.mem_vaddr );
+    // g_string_append_printf(report,"mem_paddr 0x%08lx\n", insn.mem_paddr );
     qemu_plugin_outs(report->str);
+
+    // Memory Read Test
+    {
+        uint32_t insn_from_memory;
+        qemu_plugin_read_memory((uint8_t*)&insn_from_memory, trace_insn->pc_vaddr, 4);
+        assert(trace_insn->opcode == insn_from_memory);
+        std::cout << "Opcode = " << std::hex << insn_from_memory << " Assert Succuss" << std::endl;
+    }
+
+    // Register Read Test
+    {
+        uint64_t data_in_register;
+        for(size_t i = 0 ; i < 32 ; i++) {
+            qemu_plugin_read_register((uint8_t*)&data_in_register, i);
+            std::cout << std::dec << "x" << std::setw(2) << std::setfill('0') << i << 
+                " : " << std::hex << "0x" << std::setw(16) << std::setfill('0') << data_in_register << "\t";
+            if(i % 4 == 3) std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }
 }
 
 static void plugin_user_exit() {
@@ -158,7 +180,7 @@ static void vcpu_tb_trans(qemu_plugin_id_t id, struct qemu_plugin_tb *tb)
 
         /* Register callback on instruction */
         qemu_plugin_register_vcpu_insn_exec_cb(insn, vcpu_insn_exec,
-                                                QEMU_PLUGIN_CB_NO_REGS, (void*) trace_insn);
+                                                QEMU_PLUGIN_CB_R_REGS, (void*) trace_insn);
 
     }
 

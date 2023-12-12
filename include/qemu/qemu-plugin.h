@@ -708,8 +708,38 @@ uint64_t qemu_plugin_end_code(void);
 QEMU_PLUGIN_API
 uint64_t qemu_plugin_entry_code(void);
 
-void plugin_qemu_mutex_lock_iothread(void);
+/**
+ * qemu_plugin_mutex_lock_iothread() - lock execution loop
+ */
+QEMU_PLUGIN_API
+void qemu_plugin_mutex_lock_iothread(void);
 
-void plugin_qemu_mutex_unlock_iothread(void);
+/**
+ * qemu_plugin_mutex_unlock_iothread() - unlock execution loop
+ */
+QEMU_PLUGIN_API
+void qemu_plugin_mutex_unlock_iothread(void);
+
+/**
+ * qemu_plugin_read_register() - read guest general register
+ * 
+ * @buf: pointer of data buffer maintaining register result
+ * @index: register id for indexing guest register file
+ * 
+ */
+QEMU_PLUGIN_API
+void qemu_plugin_read_register(uint8_t* buf, uint64_t index);
+
+/**
+ * qemu_plugin_read_memory() - read guest memory
+ * 
+ * @buf: pointer of data buffer maintaining memory result
+ * @addr: address for accessing guest memory
+ * @len: length of data
+ * 
+ */
+QEMU_PLUGIN_API
+void qemu_plugin_read_memory(uint8_t *buf, uint64_t addr, uint64_t len);
+
 
 #endif /* QEMU_QEMU_PLUGIN_H */

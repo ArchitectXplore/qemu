@@ -23,7 +23,7 @@ SONAMES := $(addsuffix .so,$(addprefix lib,$(NAMES)))
 CFLAGS = `pkg-config --cflags glib-2.0`
 CFLAGS += -fPIC -Wall -fvisibility=hidden -static
 # CFLAGS += $(if $(CONFIG_DEBUG_TCG), -ggdb -O0, -O3)
-CFLAGS += -O3
+CFLAGS += -g
 CFLAGS += -I$(SRC_PATH)/contrib/simpoint/include
 
 all: $(SONAMES)
