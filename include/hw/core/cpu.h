@@ -476,6 +476,9 @@ struct CPUState {
     bool stop;
     bool stopped;
 
+    /* ROI(Region of Interest) */
+    bool roi_running; // 0 : STOPPED, 1 : RUNNING
+
     /* Should CPU start in powered-off state? */
     bool start_powered_off;
 

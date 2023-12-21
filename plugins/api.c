@@ -455,3 +455,18 @@ void qemu_plugin_read_memory(uint8_t *buf, uint64_t addr, uint64_t len){
     CPUState* cpu = current_cpu;
     gdb_target_memory_rw_debug(cpu, addr, buf, len, false);
 }
+
+void qemu_plugin_vcpu_roi_start(void) {
+    CPUState* cpu = current_cpu;
+    cpu->roi_running = true;
+}
+
+void qemu_plugin_vcpu_roi_end(void) {
+    CPUState* cpu = current_cpu;
+    cpu->roi_running = false;
+}
+
+bool qemu_plugin_vcpu_roi_state(void) {
+    CPUState* cpu = current_cpu;
+    return cpu->roi_running;
+}

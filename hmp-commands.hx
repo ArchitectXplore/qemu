@@ -1847,6 +1847,7 @@ SRST
 ERST
 #endif
 
+
 #if defined(CONFIG_XEN_EMU)
     {
         .name       = "xen-event-inject",
@@ -1875,3 +1876,35 @@ SRST
   List event channels in the guest
 ERST
 #endif
+
+
+
+    {
+        .name       = "roi_start",
+        .args_type  = "cpustate_all:-a,vcpu:i?",
+        .params     = "[-a|vcpu]",
+        .help       = "Enable ROI for vcpu (-a: enable ROI for all cpus;"
+                      " vcpu: specific vCPU to query; enable the current CPU's ROI if"
+                      " no argument is specified)",
+        .cmd        = hmp_roi_start,
+    },
+
+SRST
+``roi_start``
+  Enable ROI for vcpu
+ERST
+
+    {
+        .name       = "roi_end",
+        .args_type  = "cpustate_all:-a,vcpu:i?",
+        .params     = "[-a|vcpu]",
+        .help       = "Disable ROI for vcpu (-a: disable ROI for all cpus;"
+                      " vcpu: specific vCPU to query; disable the current CPU's ROI if"
+                      " no argument is specified)",
+        .cmd        = hmp_roi_end,
+    },
+
+SRST
+``roi_end``
+  Disable ROI for vcpu
+ERST

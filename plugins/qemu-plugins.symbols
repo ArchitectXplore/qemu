@@ -46,4 +46,7 @@
   qemu_plugin_mutex_unlock_iothread;
   qemu_plugin_read_register;
   qemu_plugin_read_memory;
+  qemu_plugin_vcpu_roi_start;
+  qemu_plugin_vcpu_roi_end;
+  qemu_plugin_vcpu_roi_state;
 };

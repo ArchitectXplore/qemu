@@ -741,5 +741,25 @@ void qemu_plugin_read_register(uint8_t* buf, uint64_t index);
 QEMU_PLUGIN_API
 void qemu_plugin_read_memory(uint8_t *buf, uint64_t addr, uint64_t len);
 
+/**
+ * qemu_plugin_vcpu_roi_start() - enable roi for vcpu
+ * 
+ */
+QEMU_PLUGIN_API
+void qemu_plugin_vcpu_roi_start(void);
+
+/**
+ * qemu_plugin_vcpu_roi_end() - disable roi for vcpu
+ * 
+ */
+QEMU_PLUGIN_API
+void qemu_plugin_vcpu_roi_end(void);
+
+/**
+ * qemu_plugin_vcpu_roi_state() - return roi state of vcpu
+ * 
+ */
+QEMU_PLUGIN_API
+bool qemu_plugin_vcpu_roi_state(void);
 
 #endif /* QEMU_QEMU_PLUGIN_H */

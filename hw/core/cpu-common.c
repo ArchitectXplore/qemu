@@ -135,6 +135,7 @@ static void cpu_common_reset_hold(Object *obj)
     cpu->exception_index = -1;
     cpu->crash_occurred = false;
     cpu->cflags_next_tb = -1;
+    cpu->roi_running = false;
 
     cpu_exec_reset_hold(cpu);
 }
