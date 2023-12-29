@@ -878,4 +878,6 @@ void qemu_cleanup(int status)
     qemu_chr_cleanup();
     user_creatable_cleanup();
     /* TODO: unref root container, check all devices are ok */
+    
+    qemu_plugin_atexit_cb();
 }

@@ -569,5 +569,4 @@ static void __attribute__((__constructor__)) plugin_init(void)
     QTAILQ_INIT(&plugin.ctxs);
     qht_init(&plugin.dyn_cb_arr_ht, plugin_dyn_cb_arr_cmp, 16,
              QHT_MODE_AUTO_RESIZE);
-    atexit(qemu_plugin_atexit_cb);
 }

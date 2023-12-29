@@ -53,6 +53,5 @@ int main(int argc, char **argv)
 int qemuSystemEmulator(int argc, char **argv) {
     qemu_init(argc, argv);
     int ret = qemu_main();
-    qemu_plugin_atexit_cb();
     return ret;
 }
