@@ -54,6 +54,7 @@
 
 #include "qemu/main-loop.h"
 #include "gdbstub/internals.h"
+#include "gdbstub/syscalls.h"
 
 /* Uninstall and Reset handlers */
 
@@ -91,7 +92,8 @@ void qemu_plugin_register_vcpu_tb_exec_cb(struct qemu_plugin_tb *tb,
                                           enum qemu_plugin_cb_flags flags,
                                           void *udata)
 {
-    if (!tb->mem_only) {
+    if (!tb->mem_only)
+    {
         plugin_register_dyn_cb__udata(&tb->cbs[PLUGIN_CB_REGULAR],
                                       cb, flags, udata);
     }
@@ -101,7 +103,8 @@ void qemu_plugin_register_vcpu_tb_exec_inline(struct qemu_plugin_tb *tb,
                                               enum qemu_plugin_op op,
                                               void *ptr, uint64_t imm)
 {
-    if (!tb->mem_only) {
+    if (!tb->mem_only)
+    {
         plugin_register_inline_op(&tb->cbs[PLUGIN_CB_INLINE], 0, op, ptr, imm);
     }
 }
@@ -111,7 +114,8 @@ void qemu_plugin_register_vcpu_insn_exec_cb(struct qemu_plugin_insn *insn,
                                             enum qemu_plugin_cb_flags flags,
                                             void *udata)
 {
-    if (!insn->mem_only) {
+    if (!insn->mem_only)
+    {
         plugin_register_dyn_cb__udata(&insn->cbs[PLUGIN_CB_INSN][PLUGIN_CB_REGULAR],
                                       cb, flags, udata);
     }
@@ -121,12 +125,12 @@ void qemu_plugin_register_vcpu_insn_exec_inline(struct qemu_plugin_insn *insn,
                                                 enum qemu_plugin_op op,
                                                 void *ptr, uint64_t imm)
 {
-    if (!insn->mem_only) {
+    if (!insn->mem_only)
+    {
         plugin_register_inline_op(&insn->cbs[PLUGIN_CB_INSN][PLUGIN_CB_INLINE],
                                   0, op, ptr, imm);
     }
 }
-
 
 /*
  * We always plant memory instrumentation because they don't finalise until
@@ -139,7 +143,7 @@ void qemu_plugin_register_vcpu_mem_cb(struct qemu_plugin_insn *insn,
                                       void *udata)
 {
     plugin_register_vcpu_mem_cb(&insn->cbs[PLUGIN_CB_MEM][PLUGIN_CB_REGULAR],
-                                    cb, flags, rw, udata);
+                                cb, flags, rw, udata);
 }
 
 void qemu_plugin_register_vcpu_mem_inline(struct qemu_plugin_insn *insn,
@@ -163,9 +167,8 @@ void qemu_plugin_register_vcpu_syscall_cb(qemu_plugin_id_t id,
     plugin_register_cb(id, QEMU_PLUGIN_EV_VCPU_SYSCALL, cb);
 }
 
-void
-qemu_plugin_register_vcpu_syscall_ret_cb(qemu_plugin_id_t id,
-                                         qemu_plugin_vcpu_syscall_ret_cb_t cb)
+void qemu_plugin_register_vcpu_syscall_ret_cb(qemu_plugin_id_t id,
+                                              qemu_plugin_vcpu_syscall_ret_cb_t cb)
 {
     plugin_register_cb(id, QEMU_PLUGIN_EV_VCPU_SYSCALL_RET, cb);
 }
@@ -200,7 +203,8 @@ struct qemu_plugin_insn *
 qemu_plugin_tb_get_insn(const struct qemu_plugin_tb *tb, size_t idx)
 {
     struct qemu_plugin_insn *insn;
-    if (unlikely(idx >= tb->n)) {
+    if (unlikely(idx >= tb->n))
+    {
         return NULL;
     }
     insn = g_ptr_array_index(tb->insns, idx);
@@ -295,7 +299,8 @@ struct qemu_plugin_hwaddr *qemu_plugin_get_hwaddr(qemu_plugin_meminfo_t info,
     assert(mmu_idx < NB_MMU_MODES);
 
     if (!tlb_plugin_lookup(cpu, vaddr, mmu_idx,
-                           hwaddr_info.is_store, &hwaddr_info)) {
+                           hwaddr_info.is_store, &hwaddr_info))
+    {
         error_report("invalid use of qemu_plugin_get_hwaddr");
         return NULL;
     }
@@ -318,7 +323,8 @@ bool qemu_plugin_hwaddr_is_io(const struct qemu_plugin_hwaddr *haddr)
 uint64_t qemu_plugin_hwaddr_phys_addr(const struct qemu_plugin_hwaddr *haddr)
 {
 #ifdef CONFIG_SOFTMMU
-    if (haddr) {
+    if (haddr)
+    {
         return haddr->phys_addr;
     }
 #endif
@@ -328,16 +334,22 @@ uint64_t qemu_plugin_hwaddr_phys_addr(const struct qemu_plugin_hwaddr *haddr)
 const char *qemu_plugin_hwaddr_device_name(const struct qemu_plugin_hwaddr *h)
 {
 #ifdef CONFIG_SOFTMMU
-    if (h && h->is_io) {
+    if (h && h->is_io)
+    {
         MemoryRegion *mr = h->mr;
-        if (!mr->name) {
+        if (!mr->name)
+        {
             unsigned maddr = (uintptr_t)mr;
             g_autofree char *temp = g_strdup_printf("anon%08x", maddr);
             return g_intern_string(temp);
-        } else {
+        }
+        else
+        {
             return g_intern_string(mr->name);
         }
-    } else {
+    }
+    else
+    {
         return g_intern_static_string("RAM");
     }
 #else
@@ -351,7 +363,7 @@ const char *qemu_plugin_hwaddr_device_name(const struct qemu_plugin_hwaddr *h)
  */
 
 #ifndef CONFIG_USER_ONLY
-static MachineState * get_ms(void)
+static MachineState *get_ms(void)
 {
     return MACHINE(qdev_get_machine());
 }
@@ -395,7 +407,7 @@ const char *qemu_plugin_path_to_binary(void)
 {
     char *path = NULL;
 #ifdef CONFIG_USER_ONLY
-    TaskState *ts = (TaskState *) current_cpu->opaque;
+    TaskState *ts = (TaskState *)current_cpu->opaque;
     path = g_strdup(ts->bprm->filename);
 #endif
     return path;
@@ -405,7 +417,7 @@ uint64_t qemu_plugin_start_code(void)
 {
     uint64_t start = 0;
 #ifdef CONFIG_USER_ONLY
-    TaskState *ts = (TaskState *) current_cpu->opaque;
+    TaskState *ts = (TaskState *)current_cpu->opaque;
     start = ts->info->start_code;
 #endif
     return start;
@@ -415,7 +427,7 @@ uint64_t qemu_plugin_end_code(void)
 {
     uint64_t end = 0;
 #ifdef CONFIG_USER_ONLY
-    TaskState *ts = (TaskState *) current_cpu->opaque;
+    TaskState *ts = (TaskState *)current_cpu->opaque;
     end = ts->info->end_code;
 #endif
     return end;
@@ -425,48 +437,59 @@ uint64_t qemu_plugin_entry_code(void)
 {
     uint64_t entry = 0;
 #ifdef CONFIG_USER_ONLY
-    TaskState *ts = (TaskState *) current_cpu->opaque;
+    TaskState *ts = (TaskState *)current_cpu->opaque;
     entry = ts->info->entry;
 #endif
     return entry;
 }
 
-
-void qemu_plugin_mutex_lock_iothread(void){
+void qemu_plugin_mutex_lock_iothread(void)
+{
     qemu_mutex_lock_iothread();
 }
 
-void qemu_plugin_mutex_unlock_iothread(void){
+void qemu_plugin_mutex_unlock_iothread(void)
+{
     qemu_mutex_unlock_iothread();
 }
 
-void qemu_plugin_read_register(uint8_t* buf, uint64_t index) {
-    CPUState* cpu = current_cpu;
-    
+void qemu_plugin_read_register(uint8_t *buf, uint64_t index)
+{
+    CPUState *cpu = current_cpu;
+
     GByteArray *byteArray = g_byte_array_new();
     cpu->cc->gdb_read_register(cpu, byteArray, index);
-    
+
     memcpy(buf, byteArray->data, byteArray->len);
 
     g_byte_array_free(byteArray, TRUE);
 }
 
-void qemu_plugin_read_memory(uint8_t *buf, uint64_t addr, uint64_t len){
-    CPUState* cpu = current_cpu;
+void qemu_plugin_read_memory(uint8_t *buf, uint64_t addr, uint64_t len)
+{
+    CPUState *cpu = current_cpu;
     gdb_target_memory_rw_debug(cpu, addr, buf, len, false);
 }
 
-void qemu_plugin_vcpu_roi_start(void) {
-    CPUState* cpu = current_cpu;
+void qemu_plugin_vcpu_roi_start(void)
+{
+    CPUState *cpu = current_cpu;
     cpu->roi_running = true;
 }
 
-void qemu_plugin_vcpu_roi_end(void) {
-    CPUState* cpu = current_cpu;
+void qemu_plugin_vcpu_roi_end(void)
+{
+    CPUState *cpu = current_cpu;
     cpu->roi_running = false;
 }
 
-bool qemu_plugin_vcpu_roi_state(void) {
-    CPUState* cpu = current_cpu;
+bool qemu_plugin_vcpu_roi_state(void)
+{
+    CPUState *cpu = current_cpu;
     return cpu->roi_running;
+}
+
+void qemu_plugin_shutdown(int exit_code)
+{
+    gdb_qemu_exit(exit_code);
 }

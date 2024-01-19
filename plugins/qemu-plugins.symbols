@@ -49,4 +49,5 @@
   qemu_plugin_vcpu_roi_start;
   qemu_plugin_vcpu_roi_end;
   qemu_plugin_vcpu_roi_state;
+  qemu_plugin_shutdown;
 };

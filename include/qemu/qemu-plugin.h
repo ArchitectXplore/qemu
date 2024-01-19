@@ -762,4 +762,13 @@ void qemu_plugin_vcpu_roi_end(void);
 QEMU_PLUGIN_API
 bool qemu_plugin_vcpu_roi_state(void);
 
+QEMU_PLUGIN_API
+/**
+ * qemu_plugin_shutdown() - shutdown qemu with exit code
+ * 
+ * @exit_code: exit code
+ */
+QEMU_PLUGIN_API
+void qemu_plugin_shutdown(int exit_code);
+
 #endif /* QEMU_QEMU_PLUGIN_H */
