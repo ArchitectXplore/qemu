@@ -10921,6 +10921,37 @@ static abi_long do_syscall1(CPUArchState *cpu_env, int num, abi_long arg1,
 #ifdef __NR_exit_group
         /* new thread calls */
     case TARGET_NR_exit_group:
+        /* In old applications this may be used to implement _exit(2).
+        However in threaded applications it is used for thread termination,
+        and _exit_group is used for application termination.
+        Do thread termination if we have more then one thread.  */
+
+        pthread_mutex_lock(&clone_lock);
+
+        if (first_cpu) {
+            TaskState *ts = cpu->opaque;
+
+            if (ts->child_tidptr) {
+                put_user_u32(0, ts->child_tidptr);
+                do_sys_futex(g2h(cpu, ts->child_tidptr),
+                             FUTEX_WAKE, INT_MAX, NULL, NULL, 0);
+            }
+
+            object_unparent(OBJECT(cpu));
+            object_unref(OBJECT(cpu));
+            /*
+             * At this point the CPU should be unrealized and removed
+             * from cpu lists. We can clean-up the rest of the thread
+             * data without the lock held.
+             */
+
+            pthread_mutex_unlock(&clone_lock);
+
+            thread_cpu = NULL;
+            g_free(ts);
+        }
+
+        pthread_mutex_unlock(&clone_lock);
         preexit_cleanup(cpu_env, arg1);
         return get_errno(exit_group(arg1));
 #endif
